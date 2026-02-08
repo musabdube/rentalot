@@ -78,7 +78,11 @@ export default function HomeClient() {
           const favRes = await fetch('/api/favorites');
           if (favRes.ok) {
             const favData = await favRes.json();
-            setFavorites(favData.map((fav: any) => fav.id || fav.propertyId));
+            // Support new response shape { authenticated: boolean, favorites: [] }
+            const favList = Array.isArray(favData)
+              ? favData
+              : favData?.favorites ?? [];
+            setFavorites(favList.map((fav: any) => fav.id || fav.propertyId));
           }
         } catch (e) {
           console.error('Could not fetch favorites:', e);

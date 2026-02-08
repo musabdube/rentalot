@@ -8,7 +8,8 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      // Return 200 with a clear unauthenticated shape for anonymous users
+      return NextResponse.json({ authenticated: false, favorites: [] }, { status: 200 });
     }
 
     const favorites = await prisma.user.findUnique({
@@ -23,7 +24,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(favorites?.favoritedProperties || []);
+    return NextResponse.json({ authenticated: true, favorites: favorites?.favoritedProperties || [] });
   } catch (error) {
     console.error('Fetch favorites error:', error);
     return NextResponse.json(
