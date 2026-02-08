@@ -1,0 +1,516 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum UserRole {
+  TENANT
+  LANDLORD
+  ADMIN
+}
+
+enum PropertyType {
+  APARTMENT
+  HOUSE
+  VILLA
+  STUDIO
+}
+
+enum RentalRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
+enum MessageStatus {
+  SENT
+  READ
+  ARCHIVED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum ListingStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  ACTIVE
+}
+
+enum PropertyAvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
+  PENDING_RENT
+}
+
+enum ViewingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+// User Model
+model User {
+  id       String   @id @default(cuid())
+  email    String   @unique
+  password String?
+  name     String
+  phone    String?
+  role     UserRole @default(TENANT)
+  avatar   String?
+
+  // Address info
+  address    String?
+  city       String?
+  country    String?
+  postalCode String?
+
+  // User data
+  bio                String?
+  verificationStatus Boolean  @default(false)
+  // Delete request fields
+  deleteRequested    Boolean  @default(false)
+  deleteRequestedAt  DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relations
+  propertiesOwned          Property[]      @relation("LandlordProperties")
+  favoritedProperties      Property[]      @relation("FavoriteProperties")
+  rentalRequestsAsTenant   RentalRequest[] @relation("TenantRequests")
+  rentalRequestsAsLandlord RentalRequest[] @relation("LandlordRequests")
+  messagesSent             Message[]       @relation("MessageSender")
+  messagesReceived         Message[]       @relation("MessageReceiver")
+  reviewsAsTenant          Review[]        @relation("TenantReviews")
+  reviewsAsLandlord        Review[]        @relation("LandlordReviews")
+  viewings                 Viewing[]
+  reportsSubmitted         Report[]        @relation("ReportsSubmitted")
+  reportsAboutUser         Report[]        @relation("ReportsAboutUser")
+  notifications            Notification[]
+
+  @@index([email])
+  @@index([role])
+}
+
+// Property Model
+model Property {
+  id          String       @id @default(cuid())
+  title       String
+  description String       @db.Text
+  type        PropertyType
+  available   Boolean      @default(true)
+  availabilityStatus PropertyAvailabilityStatus @default(AVAILABLE)
+  area        Int?
+  features    String[]
+  
+  // Listing status
+  status         ListingStatus @default(PENDING)
+  isFeatured     Boolean       @default(false)
+  isVerified     Boolean       @default(false)
+  featuredUntil  DateTime?
+  isPinned       Boolean       @default(false)
+  pinnedAt       DateTime?
+  featureRequested Boolean      @default(false)
+  featureRequestedAt DateTime?
+  pinRequested   Boolean       @default(false)
+  pinRequestedAt DateTime?
+
+  // Owner info
+  landlordId String
+  landlord   User   @relation("LandlordProperties", fields: [landlordId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ===== LOCATION =====
+  city           String
+  suburb         String?
+  street         String?    // Hidden from public
+  nearbyLandmark String?
+  gpsLatitude    Float?
+  gpsLongitude   Float?
+
+  // ===== PRICING =====
+  rentAmount     Int
+  currency       String     @default("USD") // USD / ZWL
+  depositAmount  Int?
+  leaseTerm      String?    // monthly / 6 months / yearly
+  negotiable     Boolean    @default(false)
+
+  // ===== GARDEN / YARD =====
+  yardSize       String?    // small / medium / big
+  veranda        Boolean    @default(false)
+  fenced         Boolean    @default(false)
+  pavedDriveway  Boolean    @default(false)
+
+  // ===== ROOMS =====
+  bedrooms       Int
+  bathrooms      Int
+  toilets        Int?       // Separate toilets
+  lounge         Boolean    @default(false)
+  diningRoom     Boolean    @default(false)
+  kitchen        Boolean    @default(false)
+
+  // Bathroom sharing info
+  sharedBathroom  Boolean    @default(false)
+
+  // ===== PARKING =====
+  parkingSpaces  Int        @default(0)
+  garage         Boolean    @default(false)
+  carport        Boolean    @default(false)
+
+  // ===== WATER =====
+  municipalWater Boolean    @default(false)
+  borehole       Boolean    @default(false)
+  waterTank      Boolean    @default(false)
+  tankCapacity   String?    // e.g. 5000L
+
+  // ===== POWER =====
+  zesaAvailable  Boolean    @default(false)
+  solarSystem    Boolean    @default(false)
+  solarBackupHours Int?
+  generator      Boolean    @default(false)
+
+  // ===== CONNECTIVITY =====
+  internetReady  Boolean    @default(false)
+  fiberAvailable Boolean    @default(false)
+  wifiIncluded   Boolean    @default(false)
+
+  // ===== SECURITY =====
+  walled         Boolean    @default(false)
+  electricGate   Boolean    @default(false)
+  burglarBars    Boolean    @default(false)
+  securityAlarm  Boolean    @default(false)
+  guardedArea    Boolean    @default(false)
+  neighborhoodWatch Boolean @default(false)
+
+  // ===== CONDITION & EXTRAS =====
+  furnished      String?    // Fully / Partially / No
+  recentlyRenovated Boolean @default(false)
+  tiles          Boolean    @default(false)
+  ceiling        Boolean    @default(false)
+  builtInCupboards Boolean  @default(false)
+  mainBedroomEnsuite Boolean @default(false)
+  petsAllowed    Boolean    @default(false)
+  smokingAllowed Boolean    @default(false)
+  sharedProperty Boolean    @default(false)
+
+  // ===== STUDENT FRIENDLY =====
+  studentFriendly       Boolean @default(false)
+  nearCampus            Boolean @default(false)
+  campusName            String?    // Name of nearby campus
+  distanceToCampus      Float?     // Distance in km
+  walkingDistance       Boolean @default(false)  // Walking distance to campus
+  publicTransportNearby Boolean @default(false)
+  sharedRoomAllowed     Boolean @default(false)
+  utilitiesIncluded     Boolean @default(false)  // Water, electricity included in rent
+  studyFriendly         Boolean @default(false)  // Quiet environment, good lighting, desk space
+
+  // Relations
+  images                PropertyImage[]
+  rentalRequests        RentalRequest[]
+  reviews               Review[]
+  viewings              Viewing[]
+  viewingSlots          ViewingSlot[]
+  favoritedByTenants    User[]          @relation("FavoriteProperties")
+  reports               Report[]
+
+  @@index([landlordId])
+  @@index([city])
+  @@index([suburb])
+  @@index([type])
+  @@index([available])
+  @@index([currency])
+}
+
+// PropertyImage Model
+model PropertyImage {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  url        String
+  caption    String?
+  isMain     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([propertyId])
+}
+
+// RentalRequest Model
+model RentalRequest {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  tenantId String
+  tenant   User   @relation("TenantRequests", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  landlordId String
+  landlord   User   @relation("LandlordRequests", fields: [landlordId], references: [id], onDelete: Cascade)
+
+  status      RentalRequestStatus @default(PENDING)
+  requestDate DateTime            @default(now())
+  moveInDate  DateTime
+  moveOutDate DateTime?
+
+  // Tenant Information (Optional)
+  tenantPhone     String?
+  tenantEmail     String?
+  tenantOccupation String?
+  tenantIncome    String?
+  tenantEmployer  String?
+  tenantReferences String? @db.Text
+  tenantNotes     String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  messages Message[]
+  payments Payment[]
+
+  @@index([propertyId])
+  @@index([tenantId])
+  @@index([landlordId])
+  @@index([status])
+}
+
+// Message Model
+model Message {
+  id              String        @id @default(cuid())
+  rentalRequestId String?
+  rentalRequest   RentalRequest? @relation(fields: [rentalRequestId], references: [id], onDelete: Cascade)
+
+  senderId String
+  sender   User   @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  receiverId String
+  receiver   User   @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  content String        @db.Text
+  status  MessageStatus @default(SENT)
+  readAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([rentalRequestId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([status])
+}
+
+// Payment Model
+model Payment {
+  id              String        @id @default(cuid())
+  rentalRequestId String
+  rentalRequest   RentalRequest @relation(fields: [rentalRequestId], references: [id], onDelete: Cascade)
+
+  amount Int
+  status PaymentStatus @default(PENDING)
+
+  dueDate     DateTime
+  paymentDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([rentalRequestId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+// Review Model
+model Review {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  tenantId String
+  tenant   User   @relation("TenantReviews", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  landlordId String
+  landlord   User   @relation("LandlordReviews", fields: [landlordId], references: [id], onDelete: Cascade)
+
+  rating  Int    @db.SmallInt // 1-5 rating
+  comment String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+  @@index([tenantId])
+  @@index([landlordId])
+}
+
+// Viewing Model
+model Viewing {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  tenantId String
+  tenant   User   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  visitorName  String
+  visitorEmail String
+  visitorPhone String
+  
+  preferredDate String
+  preferredTime String
+  
+  notes  String?
+  status ViewingStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+  @@index([tenantId])
+  @@index([preferredDate])
+  @@index([status])
+}
+
+// Slots created by landlords for tenants to pick viewing times
+model ViewingSlot {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  // Date as a DateTime (only date portion used) and simple time strings
+  date       DateTime
+  startTime  String
+  endTime    String
+
+  // When a slot is booked this becomes true and optionally links to a booking id
+  isBooked   Boolean  @default(false)
+  bookingId  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+  @@index([date])
+}
+
+// Report Model (for scams, spam, fake listings, etc)
+model Report {
+  id          String   @id @default(cuid())
+  reportedBy  String
+  reporter    User     @relation("ReportsSubmitted", fields: [reportedBy], references: [id], onDelete: Cascade)
+  
+  type        String   // 'SCAM', 'SPAM', 'FAKE_LISTING', 'INAPPROPRIATE', 'FAKE_PROFILE', 'OTHER'
+  reason      String   @db.Text
+  description String?  @db.Text
+  
+  // Related entity
+  propertyId  String?
+  property    Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  
+  userId      String?
+  reportedUser User?    @relation("ReportsAboutUser", fields: [userId], references: [id], onDelete: SetNull)
+  
+  status      String   @default("PENDING") // 'PENDING', 'INVESTIGATING', 'RESOLVED', 'DISMISSED', 'ACTION_TAKEN'
+  adminNotes  String?  @db.Text
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([reportedBy])
+  @@index([propertyId])
+  @@index([userId])
+  @@index([status])
+  @@index([type])
+}
+
+// Analytics Model
+model Analytics {
+  id        String   @id @default(cuid())
+  date      DateTime @default(now())
+  
+  totalVisits          Int @default(0)
+  totalListings        Int @default(0)
+  totalSignups         Int @default(0)
+  totalRentalRequests  Int @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+}
+
+// Notification Model
+model Notification {
+  id String @id @default(cuid())
+  
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title String
+  message String @db.Text
+  type String // PROPERTY_UPDATE, RENTAL_REQUEST, MESSAGE, etc.
+  
+  relatedId String? // ID of related entity (property, request, etc.)
+  relatedType String? // Type of related entity
+  
+  read Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+}
+
+// Settings Model
+model Settings {
+  id String @id @default("settings")
+  
+  // Platform settings
+  platformName String @default("RentALot")
+  platformEmail String @default("hello@rentalot.com")
+  maintenanceMode Boolean @default(false)
+  
+  // Feature toggles
+  enableReporting Boolean @default(true)
+  enableMessaging Boolean @default(true)
+  enableViewingSchedule Boolean @default(true)
+  enablePayments Boolean @default(false)
+  
+  // Verification settings
+  requireLandlordVerification Boolean @default(false)
+  autoApproveListing Boolean @default(false)
+  
+  // Commission settings
+  platformCommissionPercent Int @default(10)
+  minCommissionAmount Int @default(0)
+  
+  // Listing settings
+  maxFeaturedDays Int @default(30)
+  featuredListingPrice Int @default(0) // 0 = free
+  
+  // General settings
+  maxUploadSizeMB Int @default(10)
+  maxImagesPerListing Int @default(10)
+  
+  adminNotes String? @db.Text
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
