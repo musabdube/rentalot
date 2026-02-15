@@ -12,11 +12,24 @@ export const metadata: Metadata = {
     url: '/browse',
     siteName: 'Rentalot',
     type: 'website',
+    locale: 'en_US',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Browse Rental Properties on Rentalot',
+        type: 'image/jpeg',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Browse Rentals | Rentalot',
     description: 'Browse verified rental listings, filter by price, bedrooms, and location, and compare properties on Rentalot.',
+    images: ['/og-image.jpg'],
+    creator: '@rentalot',
+    site: '@rentalot',
   },
 };
 

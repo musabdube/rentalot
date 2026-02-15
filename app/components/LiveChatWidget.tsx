@@ -149,9 +149,9 @@ export default function LiveChatWidget() {
       {/* Chat Window */}
       {isOpen && (
         <div
-          className={`fixed bottom-6 right-6 bg-white rounded-lg shadow-2xl z-50 flex flex-col transition-all ${
+          className={`fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 bg-white rounded-lg shadow-2xl z-50 flex flex-col transition-all ${
             isMinimized ? 'h-14' : 'h-[500px]'
-          } w-full max-w-md sm:w-96`}
+          } sm:w-96`}
         >
           {/* Header */}
           <div className="bg-emerald-600 text-white p-4 rounded-t-lg flex items-center justify-between">

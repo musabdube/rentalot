@@ -5,6 +5,7 @@ import { NextAuthSessionProvider } from "./providers";
 import { Footer } from "./components/Footer";
 import { CookieConsent } from "./components/CookieConsent";
 import LiveChatWidget from "./components/LiveChatWidget";
+import { OrganizationSchema, WebsiteSchema } from "./components/StructuredData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +18,69 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rentalot - Find Your Perfect Rental",
-  description: "Discover premium rental properties",
+  title: {
+    default: "Rentalot - Find Your Perfect Rental Property",
+    template: "%s | Rentalot",
+  },
+  description: "Discover premium rental properties with Rentalot. Browse apartments, houses, and commercial spaces. Connect with verified landlords and find your perfect home today.",
+  keywords: [
+    "rental properties",
+    "apartments for rent",
+    "houses for rent",
+    "property rental",
+    "find rental",
+    "landlord",
+    "tenant",
+    "real estate rental",
+    "rental marketplace",
+  ],
+  authors: [{ name: "Rentalot" }],
+  creator: "Rentalot",
+  publisher: "Rentalot",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "Rentalot",
+    title: "Rentalot - Find Your Perfect Rental Property",
+    description: "Discover premium rental properties with Rentalot. Browse apartments, houses, and commercial spaces. Connect with verified landlords and find your perfect home today.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Rentalot - Premium Rental Properties",
+        type: "image/jpeg",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Rentalot - Find Your Perfect Rental Property",
+    description: "Discover premium rental properties with Rentalot. Browse apartments, houses, and commercial spaces.",
+    images: ["/og-image.jpg"],
+    creator: "@rentalot",
+    site: "@rentalot",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "your-google-verification-code",
+    yandex: "your-yandex-verification-code",
+  },
 };
 
 export const viewport: Viewport = {
@@ -35,6 +97,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <OrganizationSchema />
+        <WebsiteSchema />
+      </head>
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
