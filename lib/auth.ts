@@ -79,4 +79,18 @@ export const authOptions: NextAuthOptions = {
     maxAge: 24 * 60 * 60, // 24 hours
   },
   secret: process.env.NEXTAUTH_SECRET,
+  // Secure cookie settings for production
+  cookies: {
+    sessionToken: {
+      name: `${process.env.NODE_ENV === 'production' ? '__Secure-' : ''}next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
+      },
+    },
+  },
+  // Ensure HTTPS in production
+  useSecureCookies: process.env.NODE_ENV === 'production',
 };

@@ -35,6 +35,12 @@ enum MessageStatus {
   ARCHIVED
 }
 
+enum EnquiryStatus {
+  NEW
+  READ
+  ARCHIVED
+}
+
 enum PaymentStatus {
   PENDING
   COMPLETED
@@ -61,6 +67,23 @@ enum ViewingStatus {
   CONFIRMED
   CANCELLED
   COMPLETED
+}
+
+enum LiveChatStatus {
+  OPEN
+  CLOSED
+}
+
+enum BlogPostStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum VoteType {
+  UPVOTE
+  DOWNVOTE
 }
 
 // User Model
@@ -101,6 +124,10 @@ model User {
   reportsSubmitted         Report[]        @relation("ReportsSubmitted")
   reportsAboutUser         Report[]        @relation("ReportsAboutUser")
   notifications            Notification[]
+  enquiries                Enquiry[]
+  liveChats                LiveChat[]
+  blogPosts                BlogPost[]
+  blogVotes                BlogVote[]
 
   @@index([email])
   @@index([role])
@@ -314,6 +341,24 @@ model Message {
   @@index([status])
 }
 
+model Enquiry {
+  id        String        @id @default(cuid())
+  userId    String?
+  user      User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name      String
+  email     String
+  subject   String
+  message   String        @db.Text
+  status    EnquiryStatus @default(NEW)
+  readAt    DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
 // Payment Model
 model Payment {
   id              String        @id @default(cuid())
@@ -477,6 +522,59 @@ model Notification {
   @@index([createdAt])
 }
 
+// LiveChat Model - For support chat with admin
+model LiveChat {
+  id String @id @default(cuid())
+  
+  userId String?
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  // For guest users who aren't logged in
+  guestName String?
+  guestEmail String?
+  
+  status LiveChatStatus @default(OPEN)
+  subject String?
+  
+  messages LiveChatMessage[]
+  
+  lastMessageAt DateTime @default(now())
+  closedAt DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([status])
+  @@index([lastMessageAt])
+  @@index([createdAt])
+}
+
+// LiveChatMessage Model
+model LiveChatMessage {
+  id String @id @default(cuid())
+  
+  chatId String
+  chat LiveChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  
+  senderId String?
+  senderName String // Display name
+  senderRole UserRole // TENANT, LANDLORD, or ADMIN
+  
+  content String @db.Text
+  isAdminMessage Boolean @default(false)
+  
+  read Boolean @default(false)
+  readAt DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([chatId])
+  @@index([createdAt])
+  @@index([read])
+}
+
 // Settings Model
 model Settings {
   id String @id @default("settings")
@@ -507,10 +605,81 @@ model Settings {
   // General settings
   maxUploadSizeMB Int @default(10)
   maxImagesPerListing Int @default(10)
+
+  // Branding
+  heroImageUrl String?
   
   adminNotes String? @db.Text
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// BlogPost Model
+model BlogPost {
+  id String @id @default(cuid())
+  
+  authorId String
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  title String
+  slug String @unique
+  content String @db.Text
+  excerpt String? @db.Text
+  coverImage String?
+  
+  hashtags String[] // Array of hashtags for searching (#harare, #entertainment, etc)
+  category String? // entertainment, resources, problems, news, etc
+  
+  status BlogPostStatus @default(PENDING)
+  
+  // Voting stats
+  upvotes Int @default(0)
+  downvotes Int @default(0)
+  
+  // Admin review
+  reviewedBy String?
+  reviewedAt DateTime?
+  rejectionReason String?
+  
+  // Analytics
+  views Int @default(0)
+  
+  // SEO
+  metaTitle String?
+  metaDescription String?
+  
+  publishedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  votes BlogVote[]
+  
+  @@index([authorId])
+  @@index([status])
+  @@index([slug])
+  @@index([publishedAt])
+  @@index([createdAt])
+}
+
+// BlogVote Model - Track user votes on blog posts
+model BlogVote {
+  id String @id @default(cuid())
+  
+  postId String
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  voteType VoteType
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([postId, userId]) // One vote per user per post
+  @@index([postId])
+  @@index([userId])
 }
 

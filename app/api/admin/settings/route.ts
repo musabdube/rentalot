@@ -66,6 +66,7 @@ export async function PUT(request: Request) {
       featuredListingPrice: data.featuredListingPrice,
       maxUploadSizeMB: data.maxUploadSizeMB,
       maxImagesPerListing: data.maxImagesPerListing,
+      heroImageUrl: data.heroImageUrl || null,
       adminNotes: data.adminNotes,
     };
 

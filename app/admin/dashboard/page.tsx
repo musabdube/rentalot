@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Users, Home, BarChart3, MessageSquare, Shield, Flag } from 'lucide-react';
+import { Users, Home, BarChart3, MessageSquare, Shield, Flag, Mail } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function AdminDashboard() {
@@ -141,6 +141,17 @@ export default function AdminDashboard() {
               <p className="text-gray-600">Review user reports for scams, spam, and inappropriate content</p>
               <div className="mt-4 text-emerald-600 font-medium group-hover:translate-x-2 transition-transform">
                 View Reports →
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/admin/enquiries" className="group">
+            <div className="bg-white rounded-xl shadow-sm p-8 hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-emerald-500">
+              <Mail className="w-12 h-12 text-emerald-500 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Enquiries</h3>
+              <p className="text-gray-600">View contact form submissions from users</p>
+              <div className="mt-4 text-emerald-600 font-medium group-hover:translate-x-2 transition-transform">
+                View Enquiries →
               </div>
             </div>
           </Link>

@@ -144,18 +144,18 @@ export default function TermsOfServicePage() {
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-8 mt-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Questions About Our Terms?</h2>
               <p className="text-gray-600 mb-4">
-                If you have any questions about these Terms of Service, please contact us at:
+                If you have any questions about these Terms of Service, please contact us:
               </p>
               <div className="space-y-2">
-                <p className="text-gray-600">
-                  <span className="font-semibold">Email:</span>{' '}
-                  <a href="mailto:support@rentalot.co.zw" className="text-emerald-600 hover:text-emerald-700">
-                    support@rentalot.co.zw
-                  </a>
-                </p>
-                <p className="text-gray-600">
-                  <span className="font-semibold">Phone:</span> +263 (4) XXX-XXXX
-                </p>
+                <div className="flex items-start gap-3 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                  <span className="text-2xl">💬</span>
+                  <div>
+                    <p className="font-semibold text-gray-900 mb-1">Live Chat Support</p>
+                    <p className="text-gray-600 text-sm">
+                      Click the chat icon at the bottom-right corner of any page to connect with our support team instantly.
+                    </p>
+                  </div>
+                </div>
                 <p className="text-gray-600">
                   <span className="font-semibold">Address:</span> Harare, Zimbabwe
                 </p>

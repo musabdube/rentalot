@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, MessageSquare, FileText, Calendar, User, BarChart3, Building2 } from 'lucide-react';
+import { Home, MessageSquare, FileText, Calendar, User, BarChart3, Building2, Edit } from 'lucide-react';
 import { useState } from 'react';
 
 const items = [
@@ -12,6 +12,7 @@ const items = [
   { href: '/landlord/viewings', label: 'Viewings', icon: Calendar },
   { href: '/landlord/messages', label: 'Messages', icon: MessageSquare },
   { href: '/landlord/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/blog/my-posts', label: 'My Blog', icon: Edit },
   { href: '/landlord/profile', label: 'Profile', icon: User },
 ];
 

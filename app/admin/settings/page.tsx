@@ -23,6 +23,7 @@ interface PlatformSettings {
   featuredListingPrice: number;
   maxUploadSizeMB: number;
   maxImagesPerListing: number;
+  heroImageUrl?: string | null;
   adminNotes?: string;
 }
 
@@ -32,6 +33,8 @@ export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<PlatformSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [heroUrl, setHeroUrl] = useState('');
+  const [heroUploading, setHeroUploading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
@@ -86,6 +89,46 @@ export default function AdminSettingsPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleHeroUpload = async (file: File) => {
+    if (!settings) return;
+    setHeroUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/admin/hero-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage({ type: 'error', text: data.error || 'Failed to upload image' });
+        return;
+      }
+
+      setSettings({ ...settings, heroImageUrl: data.url });
+      setMessage({ type: 'success', text: 'Hero image uploaded. Click Save to apply.' });
+    } catch (error) {
+      console.error('Error uploading hero image:', error);
+      setMessage({ type: 'error', text: 'Failed to upload image' });
+    } finally {
+      setHeroUploading(false);
+    }
+  };
+
+  const handleHeroUrlApply = async () => {
+    if (!settings) return;
+    if (!heroUrl.trim()) {
+      setMessage({ type: 'error', text: 'Please enter a URL' });
+      return;
+    }
+
+    setSettings({ ...settings, heroImageUrl: heroUrl.trim() });
+    setMessage({ type: 'success', text: 'Hero image URL set. Click Save to apply.' });
   };
 
   if (sessionStatus === 'loading' || loading) {
@@ -176,6 +219,77 @@ export default function AdminSettingsPage() {
                   Maintenance Mode (temporarily disable platform)
                 </label>
               </div>
+            </div>
+          </div>
+
+          {/* Hero Image */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Hero Image</h2>
+
+            <div className="space-y-4">
+              {settings.heroImageUrl ? (
+                <div className="rounded-xl overflow-hidden border border-gray-200">
+                  <img
+                    src={settings.heroImageUrl}
+                    alt="Current hero"
+                    className="w-full h-48 object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="rounded-xl border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
+                  No hero image set
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Upload new image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  disabled={heroUploading}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      handleHeroUpload(file);
+                      e.currentTarget.value = '';
+                    }
+                  }}
+                  className="w-full text-sm text-gray-700"
+                />
+                <p className="text-xs text-gray-500 mt-1">Recommended: 1600x900 or larger</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Or paste image URL
+                </label>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="text"
+                    value={heroUrl}
+                    onChange={(e) => setHeroUrl(e.target.value)}
+                    placeholder="https://..."
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleHeroUrlApply}
+                    className="px-4 py-2 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700"
+                  >
+                    Use Link
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSettings({ ...settings, heroImageUrl: null })}
+                className="text-sm font-semibold text-red-600 hover:text-red-700"
+              >
+                Remove hero image
+              </button>
             </div>
           </div>
 

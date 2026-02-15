@@ -108,12 +108,12 @@ export default function LandlordAnalyticsPage() {
         </div>
 
         {/* Time Range Selector */}
-        <div className="flex gap-3 mb-8">
+        <div className="flex flex-wrap gap-2 sm:gap-3 mb-8">
           {['week', 'month', 'quarter', 'year'].map(range => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors capitalize ${
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors capitalize text-sm sm:text-base ${
                 timeRange === range
                   ? 'bg-emerald-600 text-white'
                   : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'

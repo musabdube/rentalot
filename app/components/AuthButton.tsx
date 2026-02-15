@@ -107,7 +107,7 @@ export function AuthButton() {
           )}
           <div className="hidden sm:block text-left">
             <div className="flex items-center gap-1">
-              <p className="text-sm font-medium text-gray-900">{session?.user?.name || session?.user?.email}</p>
+              <p className="text-sm font-medium text-gray-900">{session?.user?.name || 'User'}</p>
               {isVerified && <VerificationBadge isVerified={isVerified} size="sm" />}
             </div>
             <RoleBadge role={session?.user?.role} size="sm" variant="icon-only" />
@@ -131,10 +131,9 @@ export function AuthButton() {
 
             <div>
               <div className="flex items-center gap-1">
-                <p className="text-sm font-medium text-gray-900">{session?.user?.name || session?.user?.email}</p>
+                <p className="text-sm font-medium text-gray-900">{session?.user?.name || 'User'}</p>
                 {isVerified && <VerificationBadge isVerified={isVerified} size="sm" />}
               </div>
-              <p className="text-xs text-gray-500 mt-1">{session?.user?.email}</p>
               <div className="mt-2">
                 <RoleBadge role={session?.user?.role} size="sm" variant="badge" />
               </div>

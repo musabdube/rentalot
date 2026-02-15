@@ -143,6 +143,9 @@ export function Header() {
             <Link href="/compare" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
               Compare
             </Link>
+            <Link href="/blog" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+              Blog
+            </Link>
             {session?.user?.role === 'ADMIN' && (
               <Link href="/admin/dashboard" className="text-gray-700 hover:text-purple-600 font-medium transition-colors">
                 Dashboard

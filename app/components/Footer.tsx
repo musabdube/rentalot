@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, Mail, Phone, MapPin } from 'lucide-react';
+import { Home, MessageCircle, MapPin } from 'lucide-react';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -46,6 +46,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/blog" className="text-gray-400 hover:text-emerald-400 transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className="text-gray-400 hover:text-emerald-400 transition-colors">
                   About Us
                 </Link>
@@ -84,13 +89,12 @@ export function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4">Get In Touch</h3>
             <ul className="space-y-3">
-              <li className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-emerald-400" />
-                <span className="text-gray-400">+263 (4) XXX-XXXX</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-emerald-400" />
-                <span className="text-gray-400">support@rentalot.co.zw</span>
+              <li className="flex items-start gap-3">
+                <MessageCircle className="w-4 h-4 text-emerald-400 mt-1" />
+                <div>
+                  <p className="text-emerald-400 font-semibold">Live Chat Support</p>
+                  <span className="text-gray-400 text-sm">Click the chat icon to message us</span>
+                </div>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-emerald-400 mt-1" />

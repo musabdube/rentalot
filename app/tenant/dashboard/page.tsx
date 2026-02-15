@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Heart, FileText, MessageSquare, LogOut, Calendar } from 'lucide-react';
+import { Heart, FileText, MessageSquare, LogOut, Calendar, Edit } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
 export default function TenantDashboard() {
@@ -106,6 +106,17 @@ export default function TenantDashboard() {
               <p className="text-gray-600">Chat with landlords about your applications</p>
               <div className="mt-4 text-emerald-600 font-medium group-hover:translate-x-2 transition-transform">
                 View Messages →
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/blog/my-posts" className="group">
+            <div className="bg-white rounded-xl shadow-sm p-8 hover:shadow-lg transition-shadow cursor-pointer">
+              <Edit className="w-12 h-12 text-indigo-500 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">My Blog Posts</h3>
+              <p className="text-gray-600">Write and manage your area reviews and insights</p>
+              <div className="mt-4 text-emerald-600 font-medium group-hover:translate-x-2 transition-transform">
+                View Posts →
               </div>
             </div>
           </Link>

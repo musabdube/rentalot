@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Home, Plus, MessageSquare, Settings, BarChart3, LogOut, Calendar, CheckCircle, AlertCircle, Clock } from 'lucide-react';
+import { Home, Plus, MessageSquare, Settings, BarChart3, LogOut, Calendar, CheckCircle, AlertCircle, Clock, Edit } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -168,6 +168,17 @@ export default function LandlordDashboard() {
               <p className="text-gray-600">View stats and insights about your listings</p>
               <div className="mt-4 text-emerald-600 font-medium group-hover:translate-x-2 transition-transform">
                 View Analytics →
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/blog/my-posts" className="group">
+            <div className="bg-white rounded-xl shadow-sm p-8 hover:shadow-lg transition-shadow cursor-pointer">
+              <Edit className="w-12 h-12 text-indigo-500 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">My Blog Posts</h3>
+              <p className="text-gray-600">Share insights about areas and properties</p>
+              <div className="mt-4 text-emerald-600 font-medium group-hover:translate-x-2 transition-transform">
+                View Posts →
               </div>
             </div>
           </Link>

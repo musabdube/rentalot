@@ -4,6 +4,7 @@ import "./globals.css";
 import { NextAuthSessionProvider } from "./providers";
 import { Footer } from "./components/Footer";
 import { CookieConsent } from "./components/CookieConsent";
+import LiveChatWidget from "./components/LiveChatWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +45,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <CookieConsent />
+          <LiveChatWidget />
         </NextAuthSessionProvider>
       </body>
     </html>

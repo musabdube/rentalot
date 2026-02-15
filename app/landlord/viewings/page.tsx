@@ -165,20 +165,20 @@ export default function ViewingRequestsPage() {
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </Link>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Viewing Requests</h1>
-              <p className="text-gray-600 mt-1">Manage scheduled apartment viewings</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Viewing Requests</h1>
+              <p className="text-gray-600 mt-1 text-sm sm:text-base">Manage scheduled apartment viewings</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button
                 onClick={() => setShowAvailabilityModal(true)}
-                className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700"
+                className="bg-emerald-600 text-white px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 text-sm sm:text-base whitespace-nowrap"
               >
                 Manage Availability
               </button>
-              <div className="bg-emerald-100 p-3 rounded-lg">
-              <Calendar className="w-8 h-8 text-emerald-600" />
+              <div className="bg-emerald-100 p-2 sm:p-3 rounded-lg">
+              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-600" />
             </div>
             </div>
           </div>
@@ -247,12 +247,12 @@ export default function ViewingRequestsPage() {
           </div>
         )}
         {/* Filter Tabs */}
-        <div className="flex gap-2 mb-8">
+        <div className="flex flex-wrap gap-2 mb-8">
           {['all', 'pending', 'confirmed', 'cancelled'].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f as any)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base ${
                 filter === f
                   ? 'bg-emerald-600 text-white'
                   : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'

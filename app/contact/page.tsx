@@ -1,7 +1,7 @@
 'use client';
 
 import { Header } from '@/app/components/Header';
-import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { MessageCircle, MapPin, Clock } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -32,8 +32,17 @@ export default function ContactPage() {
 
     setIsSubmitting(true);
     try {
-      // Here you would send the form data to your backend API
-      // For now, we'll just show a success message
+      const response = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData?.error || 'Failed to send message');
+      }
+
       toast.success('Message sent successfully! We will get back to you soon.');
       setFormData({
         name: '',
@@ -42,7 +51,8 @@ export default function ContactPage() {
         message: ''
       });
     } catch (error) {
-      toast.error('Failed to send message. Please try again.');
+      const message = error instanceof Error ? error.message : 'Failed to send message.';
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -58,9 +68,13 @@ export default function ContactPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-5xl font-bold text-gray-900 mb-6">Get In Touch</h1>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+                Need help? Chat with our support team instantly using our live chat feature. We're here to help you!
               </p>
+              <div className="flex items-center justify-center gap-2 text-emerald-600">
+                <MessageCircle className="w-6 h-6 animate-pulse" />
+                <p className="text-lg font-semibold">Look for the chat icon at the bottom-right corner 👉</p>
+              </div>
             </div>
           </div>
         </section>
@@ -68,36 +82,32 @@ export default function ContactPage() {
         {/* Contact Section */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <div className="grid md:grid-cols-2 gap-8 mb-16 max-w-4xl mx-auto">
               {/* Contact Info Cards */}
-              <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div className="bg-emerald-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                  <Phone className="w-6 h-6 text-emerald-600" />
+              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 rounded-xl shadow-lg border-2 border-emerald-200 hover:shadow-xl transition-all">
+                <div className="bg-emerald-600 w-16 h-16 rounded-xl flex items-center justify-center mb-4 shadow-md">
+                  <MessageCircle className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Phone</h3>
-                <p className="text-gray-600 mb-1">Call us during business hours</p>
-              <a href="tel:+263412345678" className="text-emerald-600 font-semibold hover:text-emerald-700">
-                +263 (4) XXX-XXXX
-                </a>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Live Chat Support</h3>
+                <p className="text-gray-700 mb-4 leading-relaxed">
+                  Get instant help from our support team. Click the chat icon at the bottom-right corner to start a conversation.
+                </p>
+                <div className="bg-white rounded-lg p-4 border border-emerald-200">
+                  <p className="text-sm text-gray-600 mb-2">
+                    <span className="font-semibold text-emerald-600">💬 Available 24/7</span>
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    We typically respond within minutes during business hours
+                  </p>
+                </div>
               </div>
 
               <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                  <Mail className="w-6 h-6 text-blue-600" />
+                <div className="bg-purple-100 w-16 h-16 rounded-xl flex items-center justify-center mb-4">
+                  <MapPin className="w-8 h-8 text-purple-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Email</h3>
-                <p className="text-gray-600 mb-1">Send us your inquiry</p>
-              <a href="mailto:support@rentalot.co.zw" className="text-blue-600 font-semibold hover:text-blue-700">
-                support@rentalot.co.zw
-                </a>
-              </div>
-
-              <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div className="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                  <MapPin className="w-6 h-6 text-purple-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Address</h3>
-                <p className="text-gray-600">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Location</h3>
+                <p className="text-gray-600 leading-relaxed">
                   Harare<br />
                   Zimbabwe
                 </p>
@@ -126,7 +136,12 @@ export default function ContactPage() {
 
             {/* Contact Form */}
             <div className="max-w-2xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">Send Us a Message</h2>
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Or Send Us a Message</h2>
+                <p className="text-gray-600">
+                  Prefer a form? Fill out the details below and we'll get back to you.
+                </p>
+              </div>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
@@ -234,6 +249,16 @@ export default function ContactPage() {
                 </summary>
                 <p className="mt-4 text-gray-600 ml-6">
                   If you're a landlord, go to your dashboard and click "Add Property". Fill in all the property details, upload photos, and submit for admin approval.
+                </p>
+              </details>
+
+              <details className="bg-white rounded-lg border border-gray-200 p-6 cursor-pointer hover:shadow-md transition-shadow">
+                <summary className="font-semibold text-gray-900 flex items-center gap-2">
+                  <span className="text-emerald-600">+</span>
+                  How can I get quick support?
+                </summary>
+                <p className="mt-4 text-gray-600 ml-6">
+                  Use our live chat feature! Click the chat icon (💬) at the bottom-right corner of any page to instantly connect with our support team. We're available 24/7 to help you.
                 </p>
               </details>
 

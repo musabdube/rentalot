@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, MessageSquare, Users, Settings, BarChart3, ShieldCheck, ClipboardList, Building2, Star } from 'lucide-react';
+import { Home, MessageSquare, Users, Settings, BarChart3, ShieldCheck, ClipboardList, Building2, Star, Mail, MessageCircle, FileText } from 'lucide-react';
 import { useState } from 'react';
 
 const items = [
@@ -10,7 +10,10 @@ const items = [
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/listings', label: 'Listings', icon: ClipboardList },
   { href: '/admin/properties', label: 'Properties', icon: Building2 },
+  { href: '/admin/blog', label: 'Blog', icon: FileText },
   { href: '/admin/reports', label: 'Reports', icon: ShieldCheck },
+  { href: '/admin/enquiries', label: 'Enquiries', icon: Mail },
+  { href: '/admin/chats', label: 'Live Chats', icon: MessageCircle },
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/admin/featured', label: 'Featured', icon: Star },
