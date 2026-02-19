@@ -9,7 +9,11 @@ import { useState, Suspense } from 'react';
 function SignInContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const rawCallbackUrl = searchParams.get('callbackUrl') || '/';
+  const callbackUrl =
+    rawCallbackUrl.startsWith('/') && !rawCallbackUrl.startsWith('//')
+      ? rawCallbackUrl
+      : '/';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
