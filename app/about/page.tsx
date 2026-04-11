@@ -13,7 +13,7 @@ export default function AboutPage() {
         <section className="bg-gradient-to-br from-emerald-50 to-blue-50 py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h1 className="text-5xl font-bold text-gray-900 mb-6">About RentALot</h1>
+              <h1 className="text-5xl font-bold text-gray-900 mb-6 flex justify-center items-center gap-3"><Globe className="w-10 h-10 text-emerald-600" />About RentALot</h1>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                 Revolutionizing the rental market by connecting landlords and tenants with transparency, trust, and ease.
               </p>

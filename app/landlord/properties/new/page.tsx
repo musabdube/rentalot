@@ -19,6 +19,7 @@ import {
   ConditionSection,
   BasicInfoSection,
   StudentFriendlySection,
+  ShortTermSection,
 } from '../PropertyFormSections';
 import type { PropertyForm } from '../PropertyFormTypes';
 
@@ -115,6 +116,11 @@ export default function AddPropertyPage() {
     sharedRoomAllowed: false,
     utilitiesIncluded: false,
     studyFriendly: false,
+    // Short-term
+    shortTermAvailable: false,
+    shortTermPricePerNight: '',
+    shortTermMinNights: '1',
+    shortTermMaxNights: '',
   });
 
   if (status === 'loading') {
@@ -135,6 +141,8 @@ export default function AddPropertyPage() {
         ...prev,
         [name]: (e.target as HTMLInputElement).checked,
       }));
+    } else if (type === 'radio' && (value === 'true' || value === 'false')) {
+      setFormData(prev => ({ ...prev, [name]: value === 'true' }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -297,6 +305,11 @@ export default function AddPropertyPage() {
         sharedRoomAllowed: formData.sharedRoomAllowed,
         utilitiesIncluded: formData.utilitiesIncluded,
         studyFriendly: formData.studyFriendly,
+        // Short-term
+        shortTermAvailable: formData.shortTermAvailable,
+        shortTermPricePerNight: formData.shortTermPricePerNight ? parseInt(formData.shortTermPricePerNight) : null,
+        shortTermMinNights: formData.shortTermMinNights ? parseInt(formData.shortTermMinNights) : 1,
+        shortTermMaxNights: formData.shortTermMaxNights ? parseInt(formData.shortTermMaxNights) : null,
       };
 
       // Default publish behavior: PENDING
@@ -436,7 +449,7 @@ export default function AddPropertyPage() {
             <ArrowLeft className="w-4 h-4" />
             Back to Properties
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Add New Property</h1>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><Plus className="w-7 h-7 text-emerald-600" />Add New Property</h1>
           <p className="text-gray-600 mt-1">Fill in all property details for the Zimbabwean rental market</p>
         </div>
       </div>
@@ -458,6 +471,7 @@ export default function AddPropertyPage() {
               <SecuritySection formData={formData} handleInputChange={handleInputChange} />
               <ConditionSection formData={formData} handleInputChange={handleInputChange} />
               <StudentFriendlySection formData={formData} handleInputChange={handleInputChange} />
+              <ShortTermSection formData={formData} handleInputChange={handleInputChange} />
             </div>
           </div>
 

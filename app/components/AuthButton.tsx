@@ -94,9 +94,9 @@ export function AuthButton() {
         className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors"
       >
         <div className="flex items-center gap-2">
-          {session?.user?.image ? (
+          {(session?.user?.image || avatarUrl) ? (
             <img
-              src={session.user.image}
+              src={session?.user?.image || avatarUrl!}
               alt={session?.user?.name || 'User'}
               className="w-8 h-8 rounded-full object-cover"
             />

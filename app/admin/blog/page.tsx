@@ -135,7 +135,7 @@ export default function AdminBlogPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Blog Management</h1>
+        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2"><FileText className="w-6 h-6 text-emerald-600" />Blog Management</h1>
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <FileText className="w-4 h-4" />
           {(posts || []).length} {(posts || []).length === 1 ? 'post' : 'posts'}

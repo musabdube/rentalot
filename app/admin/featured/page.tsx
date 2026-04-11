@@ -124,7 +124,7 @@ export default function AdminFeaturedPage() {
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Featured Properties</h1>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><Star className="w-7 h-7 text-emerald-600" />Featured Properties</h1>
           <p className="text-gray-600 mt-1">Manage currently featured listings and promotions</p>
         </div>
       </div>

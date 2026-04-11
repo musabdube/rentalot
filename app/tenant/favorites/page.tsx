@@ -75,7 +75,7 @@ export default function FavoritesPage() {
         ) : (
           <div>
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">My Favorite Properties</h1>
+              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><Heart className="w-7 h-7 text-emerald-600" />My Favorite Properties</h1>
               <p className="text-gray-600 mt-2">{favorites.length} property/properties saved</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

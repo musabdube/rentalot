@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Edit2, Save, X, MapPin, Phone, Mail, FileText, Eye, EyeOff, Lock } from 'lucide-react';
+import { ArrowLeft, Edit2, Save, X, MapPin, Phone, Mail, FileText, Eye, EyeOff, Lock, User } from 'lucide-react';
 import { useEffect, useState } from 'react';import toast from 'react-hot-toast';import Image from 'next/image';
 
 interface LandlordProfile {
@@ -163,7 +163,7 @@ export default function LandlordProfilePage() {
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><User className="w-7 h-7 text-emerald-600" />My Profile</h1>
         </div>
       </div>
 
@@ -248,7 +248,7 @@ export default function LandlordProfilePage() {
                   value={formData.phone || ''}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="+263 77 123 4567"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
@@ -264,7 +264,7 @@ export default function LandlordProfilePage() {
                   value={formData.country || ''}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  placeholder="e.g., United States"
+                  placeholder="e.g., Zimbabwe"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
@@ -281,7 +281,7 @@ export default function LandlordProfilePage() {
                   value={formData.city || ''}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  placeholder="e.g., New York"
+                  placeholder="e.g., Harare"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
@@ -297,7 +297,7 @@ export default function LandlordProfilePage() {
                   value={formData.postalCode || ''}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  placeholder="e.g., 10001"
+                  placeholder="e.g., HRR 263"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
@@ -314,7 +314,7 @@ export default function LandlordProfilePage() {
                 value={formData.address || ''}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                placeholder="e.g., 123 Main Street"
+                placeholder="e.g., 12 Samora Machel Avenue, Harare"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>

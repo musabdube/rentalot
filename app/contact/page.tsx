@@ -67,7 +67,7 @@ export default function ContactPage() {
         <section className="bg-gradient-to-br from-emerald-50 to-blue-50 py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h1 className="text-5xl font-bold text-gray-900 mb-6">Get In Touch</h1>
+              <h1 className="text-5xl font-bold text-gray-900 mb-6 flex justify-center items-center gap-3"><MessageCircle className="w-10 h-10 text-emerald-600" />Get In Touch</h1>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
                 Need help? Chat with our support team instantly using our live chat feature. We're here to help you!
               </p>

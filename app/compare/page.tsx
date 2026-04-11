@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Header } from '@/app/components/Header';
 import { Property } from '@/app/types/property';
-import { ArrowLeft, Plus, Minus, X } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, X, BarChart2 } from 'lucide-react';
 import Link from 'next/link';
 import { PropertyCard } from '@/app/components/PropertyCard';
 import { compareProperties, calculateSecurityScore, calculateAmenityScore, formatPrice } from '@/app/lib/propertyUtils';
@@ -79,7 +79,7 @@ export default function PropertyComparePage() {
             <ArrowLeft className="w-4 h-4" />
             Back to Browse
           </Link>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Compare Properties</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-2"><BarChart2 className="w-8 h-8 text-emerald-600" />Compare Properties</h1>
           <p className="text-gray-600">
             Select up to 4 properties to compare side-by-side. Click the + button on any property card to add it to the comparison.
           </p>

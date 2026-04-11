@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/app/components/Header';
-import { ArrowLeft, Save, Send, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Save, Send, Upload, X, Image as ImageIcon, PenLine } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
@@ -136,7 +136,7 @@ export default function CreateBlogPage() {
         </Link>
 
         <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Create Blog Post</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-2"><PenLine className="w-7 h-7 text-emerald-600" />Create Blog Post</h1>
 
           <div className="space-y-6">
             {/* Title */}

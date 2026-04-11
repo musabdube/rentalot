@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Home, Plus, MessageSquare, Settings, BarChart3, LogOut, Calendar, CheckCircle, AlertCircle, Clock, Edit } from 'lucide-react';
+import { Home, Plus, MessageSquare, Settings, BarChart3, LogOut, Calendar, CheckCircle, AlertCircle, Clock, Edit, Users, CalendarDays } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -139,6 +139,17 @@ export default function LandlordDashboard() {
             </div>
           </Link>
 
+          <Link href="/landlord/bookings" className="group">
+            <div className="bg-white rounded-xl shadow-sm p-8 hover:shadow-lg transition-shadow cursor-pointer border-2 border-amber-100">
+              <CalendarDays className="w-12 h-12 text-amber-500 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Short-Stay Bookings</h3>
+              <p className="text-gray-600">Manage overnight and short-term booking requests</p>
+              <div className="mt-4 text-amber-600 font-medium group-hover:translate-x-2 transition-transform">
+                View Bookings →
+              </div>
+            </div>
+          </Link>
+
           <Link href="/landlord/requests" className="group">
             <div className="bg-white rounded-xl shadow-sm p-8 hover:shadow-lg transition-shadow cursor-pointer">
               <BarChart3 className="w-12 h-12 text-blue-500 mb-4" />
@@ -157,6 +168,17 @@ export default function LandlordDashboard() {
               <p className="text-gray-600">Chat with tenants and manage conversations</p>
               <div className="mt-4 text-emerald-600 font-medium group-hover:translate-x-2 transition-transform">
                 View Messages →
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/landlord/messages" className="group">
+            <div className="bg-white rounded-xl shadow-sm p-8 hover:shadow-lg transition-shadow cursor-pointer border-2 border-emerald-100">
+              <Users className="w-12 h-12 text-teal-500 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Roommate Inbox</h3>
+              <p className="text-gray-600">View &amp; reply to messages from potential roommates</p>
+              <div className="mt-4 text-emerald-600 font-medium group-hover:translate-x-2 transition-transform">
+                Open Inbox →
               </div>
             </div>
           </Link>

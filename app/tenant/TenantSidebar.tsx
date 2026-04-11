@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, MessageSquare, Heart, FileText, Calendar, User, Menu, Edit } from 'lucide-react';
+import { Home, MessageSquare, Heart, FileText, Calendar, User, Menu, Edit, Users, Building2 } from 'lucide-react';
 import { useState } from 'react';
 
 const items = [
@@ -11,8 +11,10 @@ const items = [
   { href: '/tenant/favorites', label: 'Favorites', icon: Heart },
   { href: '/tenant/requests', label: 'Requests', icon: FileText },
   { href: '/tenant/viewings', label: 'Viewings', icon: Calendar },
+  { href: '/tenant/roommate', label: 'Roommates', icon: Users },
   { href: '/blog/my-posts', label: 'My Blog', icon: Edit },
   { href: '/tenant/profile', label: 'Profile', icon: User },
+  { href: '/tenant/switch-role', label: 'Go Landlord', icon: Building2 },
 ];
 
 export default function TenantSidebar({ className = '' }: { className?: string }) {

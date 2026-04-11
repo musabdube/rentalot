@@ -150,7 +150,7 @@ export default function VerificationPage() {
           Back to Dashboard
         </Link>
 
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Verification Center</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-2"><CheckCircle className="w-8 h-8 text-emerald-600" />Verification Center</h1>
         <p className="text-gray-600 mb-8">Approve and verify properties, tenants, and landlords</p>
 
         {/* Tab Navigation */}

@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Upload, Check, X, Loader, Eye, EyeOff, Lock } from 'lucide-react';
+import { ArrowLeft, Upload, Check, X, Loader, Eye, EyeOff, Lock, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
 
@@ -161,7 +161,7 @@ export default function TenantProfilePage() {
         </Link>
 
         <div className="bg-white rounded-xl shadow-sm p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">My Profile</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-2"><User className="w-7 h-7 text-emerald-600" />My Profile</h1>
 
           {error && (
             <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg flex items-center gap-2">
@@ -248,7 +248,7 @@ export default function TenantProfilePage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    placeholder="Enter your phone number"
+                    placeholder="+263 77 123 4567"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                   />
                 </div>
@@ -268,7 +268,7 @@ export default function TenantProfilePage() {
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    placeholder="Enter your address"
+                    placeholder="e.g., 12 Samora Machel Avenue, Harare"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                   />
                 </div>
@@ -283,7 +283,7 @@ export default function TenantProfilePage() {
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
-                      placeholder="City"
+                      placeholder="e.g., Harare"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                     />
                   </div>
@@ -297,7 +297,7 @@ export default function TenantProfilePage() {
                       name="country"
                       value={formData.country}
                       onChange={handleInputChange}
-                      placeholder="Country"
+                      placeholder="e.g., Zimbabwe"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                     />
                   </div>
@@ -311,7 +311,7 @@ export default function TenantProfilePage() {
                       name="postalCode"
                       value={formData.postalCode}
                       onChange={handleInputChange}
-                      placeholder="Postal code"
+                      placeholder="e.g., HRR 263"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                     />
                   </div>

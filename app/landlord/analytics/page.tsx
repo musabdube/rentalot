@@ -102,7 +102,7 @@ export default function LandlordAnalyticsPage() {
               <ArrowLeft className="w-5 h-5" />
               Back to Dashboard
             </Link>
-            <h1 className="text-4xl font-bold text-gray-900">Analytics & Insights</h1>
+            <h1 className="text-4xl font-bold text-gray-900 flex items-center gap-2"><TrendingUp className="w-8 h-8 text-emerald-600" />Analytics & Insights</h1>
             <p className="text-gray-600 mt-2">Track your property performance and rental activity</p>
           </div>
         </div>

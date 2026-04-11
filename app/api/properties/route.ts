@@ -101,6 +101,10 @@ export async function POST(request: NextRequest) {
       sharedRoomAllowed,
       utilitiesIncluded,
       studyFriendly,
+      shortTermAvailable,
+      shortTermPricePerNight,
+      shortTermMinNights,
+      shortTermMaxNights,
       status,
       saveAsDraft,
     } = body;
@@ -239,6 +243,12 @@ export async function POST(request: NextRequest) {
         sharedRoomAllowed: sharedRoomAllowed || false,
         utilitiesIncluded: utilitiesIncluded || false,
         studyFriendly: studyFriendly || false,
+        
+        // Short-term bookings
+        shortTermAvailable: shortTermAvailable || false,
+        shortTermPricePerNight: shortTermPricePerNight ? parseInt(shortTermPricePerNight) : null,
+        shortTermMinNights: shortTermMinNights ? parseInt(shortTermMinNights) : 1,
+        shortTermMaxNights: shortTermMaxNights ? parseInt(shortTermMaxNights) : null,
         
         // System fields
         available: true,

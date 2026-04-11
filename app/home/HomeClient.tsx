@@ -199,8 +199,8 @@ export default function HomeClient() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4">
-              Discover Your Perfect Home
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 flex justify-center items-center gap-3">
+              <Home className="w-10 h-10" />Discover Your Perfect Home
             </h1>
             <p className="text-lg sm:text-xl text-emerald-50 mb-8">
               Find premium rental properties that match your lifestyle

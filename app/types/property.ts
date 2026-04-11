@@ -110,4 +110,10 @@ export interface Property {
   sharedRoomAllowed?: boolean;
   utilitiesIncluded?: boolean;
   studyFriendly?: boolean;
+
+  // ===== SHORT-TERM BOOKINGS =====
+  shortTermAvailable?: boolean;
+  shortTermPricePerNight?: number;
+  shortTermMinNights?: number;
+  shortTermMaxNights?: number;
 }

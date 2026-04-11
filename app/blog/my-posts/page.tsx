@@ -144,7 +144,7 @@ export default function MyPostsPage() {
           </Link>
         </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">My Blog Posts</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-2"><FileText className="w-7 h-7 text-emerald-600" />My Blog Posts</h1>
 
         {/* Filter Tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">

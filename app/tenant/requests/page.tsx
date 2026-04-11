@@ -120,7 +120,7 @@ export default function TenantRequestsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">My Rental Requests</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-2"><FileText className="w-8 h-8 text-emerald-600" />My Rental Requests</h1>
             <p className="text-gray-600">Track and manage your property rental applications</p>
           </div>
           <Link

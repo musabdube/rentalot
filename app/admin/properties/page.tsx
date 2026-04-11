@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Search, CheckCircle, XCircle, Eye, Trash2, MessageSquare, Send, Pin } from 'lucide-react';
+import { ArrowLeft, Search, CheckCircle, XCircle, Eye, Trash2, MessageSquare, Send, Pin, Building2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -172,7 +172,7 @@ export default function AdminPropertiesPage() {
           <Link href="/admin/dashboard" className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-4">
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Property Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><Building2 className="w-7 h-7 text-emerald-600" />Property Management</h1>
           <p className="text-gray-600 mt-1">Review and manage property listings</p>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Header } from '@/app/components/Header';
-import { ArrowLeft, Plus, X, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Plus, X, Image as ImageIcon, Edit2 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -21,6 +21,7 @@ import {
   ConditionSection,
   BasicInfoSection,
   StudentFriendlySection,
+  ShortTermSection,
 } from '../../PropertyFormSections';
 import { PropertyForm } from '../../PropertyFormTypes';
 
@@ -102,6 +103,11 @@ export default function EditPropertyPage() {
     sharedRoomAllowed: false,
     utilitiesIncluded: false,
     studyFriendly: false,
+    // Short-term
+    shortTermAvailable: false,
+    shortTermPricePerNight: '',
+    shortTermMinNights: '1',
+    shortTermMaxNights: '',
   });
 
   useEffect(() => {
@@ -196,6 +202,11 @@ export default function EditPropertyPage() {
             sharedRoomAllowed: property.sharedRoomAllowed || false,
             utilitiesIncluded: property.utilitiesIncluded || false,
             studyFriendly: property.studyFriendly || false,
+            // Short-term
+            shortTermAvailable: property.shortTermAvailable || false,
+            shortTermPricePerNight: (property.shortTermPricePerNight || '').toString(),
+            shortTermMinNights: (property.shortTermMinNights || '1').toString(),
+            shortTermMaxNights: (property.shortTermMaxNights || '').toString(),
           });
         } else {
           toast.error('Failed to load property');
@@ -220,6 +231,8 @@ export default function EditPropertyPage() {
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({ ...prev, [name]: checked }));
+    } else if (type === 'radio' && (value === 'true' || value === 'false')) {
+      setFormData(prev => ({ ...prev, [name]: value === 'true' }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -393,7 +406,7 @@ export default function EditPropertyPage() {
             <ArrowLeft className="w-4 h-4" />
             Back to Properties
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Edit Property</h1>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><Edit2 className="w-7 h-7 text-emerald-600" />Edit Property</h1>
         </div>
       </div>
 
@@ -435,6 +448,9 @@ export default function EditPropertyPage() {
 
             {/* Student-Friendly Features */}
             <StudentFriendlySection formData={formData} handleInputChange={handleInputChange} />
+
+            {/* Short-term / overnight */}
+            <ShortTermSection formData={formData} handleInputChange={handleInputChange} />
 
             {/* Property Images */}
             <div>

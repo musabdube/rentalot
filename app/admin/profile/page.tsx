@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Edit2, Save, X, Phone, FileText, Eye, EyeOff, Lock } from 'lucide-react';
+import { ArrowLeft, Edit2, Save, X, Phone, FileText, Eye, EyeOff, Lock, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -148,7 +148,7 @@ export default function AdminProfilePage() {
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Profile</h1>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><User className="w-7 h-7 text-emerald-600" />Admin Profile</h1>
         </div>
       </div>
 
@@ -195,26 +195,26 @@ export default function AdminProfilePage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                 <input type="tel" name="phone" value={formData.phone || ''} onChange={handleInputChange} disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg" />
+                  placeholder="+263 77 123 4567" className="w-full px-4 py-2 border border-gray-300 rounded-lg" />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
                 <input type="text" name="country" value={formData.country || ''} onChange={handleInputChange} disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg" />
+                  placeholder="e.g., Zimbabwe" className="w-full px-4 py-2 border border-gray-300 rounded-lg" />
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
               <input type="text" name="address" value={formData.address || ''} onChange={handleInputChange} disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg" />
+                placeholder="e.g., 12 Samora Machel Avenue, Harare" className="w-full px-4 py-2 border border-gray-300 rounded-lg" />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Bio / Notes</label>
               <textarea name="bio" value={formData.bio || ''} onChange={handleInputChange} disabled={!isEditing} rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg" />
+                placeholder="e.g., Experienced property manager based in Harare, Zimbabwe" className="w-full px-4 py-2 border border-gray-300 rounded-lg" />
             </div>
           </div>
 

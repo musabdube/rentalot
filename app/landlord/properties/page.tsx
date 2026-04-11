@@ -155,7 +155,7 @@ export default function LandlordPropertiesPage() {
             Back to Dashboard
           </Link>
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">My Properties</h1>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><Home className="w-7 h-7 text-emerald-600" />My Properties</h1>
             <Link
               href="/landlord/properties/new"
               className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors"

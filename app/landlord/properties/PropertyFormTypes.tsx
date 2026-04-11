@@ -65,4 +65,9 @@ export interface PropertyForm {
   sharedRoomAllowed: boolean;
   utilitiesIncluded: boolean;
   studyFriendly: boolean;
+  // Short-term / overnight
+  shortTermAvailable: boolean;
+  shortTermPricePerNight: string;
+  shortTermMinNights: string;
+  shortTermMaxNights: string;
 }

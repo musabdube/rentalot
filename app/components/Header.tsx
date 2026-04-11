@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, Heart, Bell, ChevronDown } from 'lucide-react';
+import { Home, Heart, Bell, ChevronDown, Search, BarChart2, BookOpen, LayoutDashboard, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { AuthButton } from './AuthButton';
 import { useSession } from 'next-auth/react';
@@ -57,15 +57,27 @@ export function Header() {
 
   const fetchUnreadMessages = async () => {
     try {
-      const res = await fetch('/api/messages');
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        const unreadCount = data.reduce((count: number, conv: any) => {
-          const unread = conv.messages?.filter((msg: any) => msg.receiverId === session?.user?.id && msg.status !== 'READ')?.length || 0;
-          return count + unread;
-        }, 0);
-        setUnreadMessages(unreadCount);
-      }
+      const [propRes, roommateRes] = await Promise.all([
+        fetch('/api/messages'),
+        fetch('/api/roommate/messages?inbox=true'),
+      ]);
+      const [propData, roommateData] = await Promise.all([
+        propRes.json(),
+        roommateRes.json(),
+      ]);
+
+      const propUnread = Array.isArray(propData)
+        ? propData.reduce((count: number, conv: any) => {
+            const unread = conv.messages?.filter((msg: any) => msg.receiverId === session?.user?.id && msg.status !== 'READ')?.length || 0;
+            return count + unread;
+          }, 0)
+        : 0;
+
+      const roommateUnread = Array.isArray(roommateData)
+        ? roommateData.reduce((count: number, conv: any) => count + (conv.unreadCount || 0), 0)
+        : 0;
+
+      setUnreadMessages(propUnread + roommateUnread);
     } catch (error) {
       console.error('Error fetching unread messages:', error);
     }
@@ -137,22 +149,25 @@ export function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="/browse" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
-              Browse
+            <Link href="/browse" className="flex items-center gap-1.5 text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+              <Search className="w-4 h-4" />Browse
             </Link>
-            <Link href="/compare" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
-              Compare
+            <Link href="/compare" className="flex items-center gap-1.5 text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+              <BarChart2 className="w-4 h-4" />Compare
             </Link>
-            <Link href="/blog" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
-              Blog
+            <Link href="/blog" className="flex items-center gap-1.5 text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+              <BookOpen className="w-4 h-4" />Blog
             </Link>
             {session?.user?.role === 'ADMIN' && (
-              <Link href="/admin/dashboard" className="text-gray-700 hover:text-purple-600 font-medium transition-colors">
-                Dashboard
+              <Link href="/admin/dashboard" className="flex items-center gap-1.5 text-gray-700 hover:text-purple-600 font-medium transition-colors">
+                <LayoutDashboard className="w-4 h-4" />Dashboard
               </Link>
             )}
             {session?.user?.role === 'TENANT' && (
               <>
+                <Link href="/tenant/dashboard" className="flex items-center gap-1.5 text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+                  <LayoutDashboard className="w-4 h-4" />Dashboard
+                </Link>
                 <Link
                   href="/tenant/messages"
                   className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 font-medium transition-colors relative"
@@ -177,15 +192,15 @@ export function Header() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/landlord/properties/new"
-                  className="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors"
+                  className="flex items-center gap-1.5 bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors"
                 >
-                  Add Property
+                  <Plus className="w-4 h-4" />Add Property
                 </Link>
                 <Link
                   href="/landlord/dashboard"
-                  className="text-gray-700 hover:text-emerald-600 font-medium transition-colors"
+                  className="flex items-center gap-1.5 text-gray-700 hover:text-emerald-600 font-medium transition-colors"
                 >
-                  Dashboard
+                  <LayoutDashboard className="w-4 h-4" />Dashboard
                 </Link>
                 <Link
                   href="/landlord/messages"

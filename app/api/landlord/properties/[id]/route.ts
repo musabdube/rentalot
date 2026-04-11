@@ -177,6 +177,10 @@ export async function PUT(
       sharedRoomAllowed,
       utilitiesIncluded,
       studyFriendly,
+      shortTermAvailable,
+      shortTermPricePerNight,
+      shortTermMinNights,
+      shortTermMaxNights,
     } = body;
     
     // Debug: Log student-friendly fields
@@ -329,6 +333,12 @@ export async function PUT(
         sharedRoomAllowed: sharedRoomAllowed ?? false,
         utilitiesIncluded: utilitiesIncluded ?? false,
         studyFriendly: studyFriendly ?? false,
+        
+        // Short-term bookings
+        shortTermAvailable: shortTermAvailable ?? false,
+        shortTermPricePerNight: shortTermPricePerNight ? parseInt(shortTermPricePerNight) : null,
+        shortTermMinNights: shortTermMinNights ? parseInt(shortTermMinNights) : 1,
+        shortTermMaxNights: shortTermMaxNights ? parseInt(shortTermMaxNights) : null,
         
         // Images
         ...(processedImages && processedImages.length > 0 && {

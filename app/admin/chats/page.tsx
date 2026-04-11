@@ -206,7 +206,7 @@ export default function AdminLiveChatsPage() {
           </Link>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Live Support Chats</h1>
+              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><MessageCircle className="w-7 h-7 text-emerald-600" />Live Support Chats</h1>
               <p className="text-gray-600 mt-1">Manage customer support conversations</p>
             </div>
             <button

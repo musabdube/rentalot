@@ -42,6 +42,8 @@ const BED_BATH_OPTIONS = [
   { label: '3+', value: '3+' },
 ];
 
+const PRICE_FORMATTER = new Intl.NumberFormat('en-US');
+
 export function PropertyFilters({ filters, onChange, onReset, maxPrice = 10000 }: PropertyFiltersProps) {
   const [showDrawer, setShowDrawer] = useState(false);
   const [showPricePopover, setShowPricePopover] = useState(false);
@@ -102,7 +104,7 @@ export function PropertyFilters({ filters, onChange, onReset, maxPrice = 10000 }
             className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 bg-white text-sm font-semibold text-gray-700 hover:border-emerald-400"
           >
             <Tag className="w-4 h-4 text-emerald-600" />
-            ${filters.priceMin.toLocaleString()} - ${filters.priceMax.toLocaleString()}
+            ${PRICE_FORMATTER.format(filters.priceMin)} - ${PRICE_FORMATTER.format(filters.priceMax)}
           </button>
 
           {showPricePopover && (

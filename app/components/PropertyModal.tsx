@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { X, Bed, Bath, Maximize2, MapPin, Check, ChevronLeft, ChevronRight, MessageSquare, Droplet, Zap, Wifi, Lock, Home, Calendar, GraduationCap, Bus, DownloadCloud } from 'lucide-react';
+import { X, Bed, Bath, Maximize2, MapPin, Check, ChevronLeft, ChevronRight, MessageSquare, Droplet, Zap, Wifi, Lock, Home, Calendar, GraduationCap, Bus, DownloadCloud, Moon } from 'lucide-react';
 import { Property } from '../types/property';
 import { ViewingScheduleModal } from './ViewingScheduleModal';
 import { ContactLandlordModal } from './ContactLandlordModal';
@@ -21,6 +21,46 @@ export function PropertyModal({ property, onClose }: PropertyModalProps) {
   const [showTenantInfo, setShowTenantInfo] = useState(false);
   const [tenantData, setTenantData] = useState<TenantInfoData>({});
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Short-term booking state
+  const [stCheckIn, setStCheckIn] = useState('');
+  const [stCheckOut, setStCheckOut] = useState('');
+  const [stNotes, setStNotes] = useState('');
+  const [stLoading, setStLoading] = useState(false);
+  const [stError, setStError] = useState('');
+  const [stSuccess, setStSuccess] = useState('');
+
+  function calcNights() {
+    if (!stCheckIn || !stCheckOut) return 0;
+    const diff = new Date(stCheckOut).getTime() - new Date(stCheckIn).getTime();
+    return Math.max(0, Math.round(diff / (1000 * 60 * 60 * 24)));
+  }
+
+  async function handleBookShortStay() {
+    setStError('');
+    setStSuccess('');
+    setStLoading(true);
+    try {
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ propertyId: property.id, checkIn: stCheckIn, checkOut: stCheckOut, guestNotes: stNotes || undefined }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setStError(data.error || 'Booking failed');
+      } else {
+        setStSuccess('Booking request sent! The landlord will review and respond shortly.');
+        setStCheckIn('');
+        setStCheckOut('');
+        setStNotes('');
+      }
+    } catch {
+      setStError('Something went wrong. Please try again.');
+    } finally {
+      setStLoading(false);
+    }
+  }
 
   const images = property.images && property.images.length > 0 
     ? property.images 
@@ -246,7 +286,7 @@ export function PropertyModal({ property, onClose }: PropertyModalProps) {
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
-                className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden transition-all ${
+                className={`shrink-0 w-20 h-20 rounded-lg overflow-hidden transition-all ${
                   index === currentImageIndex
                     ? 'ring-2 ring-emerald-600'
                     : 'opacity-60 hover:opacity-100'
@@ -763,6 +803,81 @@ export function PropertyModal({ property, onClose }: PropertyModalProps) {
               Contact Landlord
             </button>
           </div>
+
+          {/* Short-Term Booking Widget */}
+          {property.shortTermAvailable && property.shortTermPricePerNight && (
+            <div className="mb-8 bg-amber-50 border border-amber-200 rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Moon className="w-5 h-5 text-amber-600" />
+                <h3 className="text-lg font-bold text-gray-900">Book a Short Stay</h3>
+                <span className="ml-auto bg-amber-100 text-amber-800 text-sm font-semibold px-3 py-1 rounded-full">
+                  ${property.shortTermPricePerNight}/night
+                </span>
+              </div>
+              {property.shortTermMinNights && (
+                <p className="text-xs text-amber-700 mb-4">
+                  Minimum {property.shortTermMinNights} night{property.shortTermMinNights > 1 ? 's' : ''}
+                  {property.shortTermMaxNights ? ` · Maximum ${property.shortTermMaxNights} nights` : ''}
+                </p>
+              )}
+              {stSuccess ? (
+                <div className="bg-green-100 border border-green-200 text-green-800 rounded-xl p-4 text-sm font-medium">
+                  {stSuccess}
+                </div>
+              ) : session?.user?.role === 'TENANT' ? (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1">Check-in</label>
+                      <input
+                        type="date"
+                        value={stCheckIn}
+                        min={new Date().toISOString().split('T')[0]}
+                        onChange={e => { setStCheckIn(e.target.value); setStError(''); }}
+                        className="w-full border border-amber-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1">Check-out</label>
+                      <input
+                        type="date"
+                        value={stCheckOut}
+                        min={stCheckIn || new Date().toISOString().split('T')[0]}
+                        onChange={e => { setStCheckOut(e.target.value); setStError(''); }}
+                        className="w-full border border-amber-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+                      />
+                    </div>
+                  </div>
+                  {stCheckIn && stCheckOut && calcNights() > 0 && (
+                    <div className="bg-white rounded-xl border border-amber-200 p-3 text-sm flex justify-between items-center">
+                      <span className="text-gray-600">{calcNights()} night{calcNights() !== 1 ? 's' : ''} × ${property.shortTermPricePerNight}</span>
+                      <span className="font-bold text-gray-900">${calcNights() * property.shortTermPricePerNight}</span>
+                    </div>
+                  )}
+                  <textarea
+                    value={stNotes}
+                    onChange={e => setStNotes(e.target.value)}
+                    placeholder="Any special requests or notes (optional)"
+                    rows={2}
+                    className="w-full border border-amber-200 rounded-xl px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+                  />
+                  {stError && (
+                    <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3">{stError}</p>
+                  )}
+                  <button
+                    onClick={handleBookShortStay}
+                    disabled={stLoading || !stCheckIn || !stCheckOut || calcNights() <= 0}
+                    className="w-full bg-amber-600 text-white py-3 rounded-xl font-semibold text-base hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Moon className="w-4 h-4" />
+                    {stLoading ? 'Sending Request…' : 'Request to Book'}
+                  </button>
+                </div>
+              ) : (
+                <p className="text-sm text-amber-700">Sign in as a tenant to book this short stay.</p>
+              )}
+            </div>
+          )}
 
           {/* Landlord Info */}
           {property.landlord && (

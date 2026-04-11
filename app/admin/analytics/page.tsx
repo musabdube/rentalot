@@ -119,7 +119,7 @@ export default function AdminAnalyticsPage() {
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Platform Analytics</h1>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><BarChart3 className="w-7 h-7 text-emerald-600" />Platform Analytics</h1>
           <p className="text-gray-600 mt-1">Comprehensive insights and statistics</p>
         </div>
       </div>

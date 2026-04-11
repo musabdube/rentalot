@@ -167,7 +167,7 @@ export default function ViewingRequestsPage() {
           </Link>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Viewing Requests</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2"><Calendar className="w-6 h-6 text-emerald-600" />Viewing Requests</h1>
               <p className="text-gray-600 mt-1 text-sm sm:text-base">Manage scheduled apartment viewings</p>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">

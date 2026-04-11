@@ -86,6 +86,22 @@ enum VoteType {
   DOWNVOTE
 }
 
+enum RoommateListingStatus {
+  PENDING
+  APPROVED
+  ACTIVE
+  REJECTED
+  INACTIVE
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
 // User Model
 model User {
   id       String   @id @default(cuid())
@@ -128,6 +144,11 @@ model User {
   liveChats                LiveChat[]
   blogPosts                BlogPost[]
   blogVotes                BlogVote[]
+  roommateListings         RoommateListing[]     @relation("TenantRoommateListings")
+  roommateMessagesSent     RoommateMessage[]     @relation("RoommateMessageSender")
+  roommateMessagesReceived RoommateMessage[]     @relation("RoommateMessageReceiver")
+  shortTermBookingsAsGuest ShortTermBooking[]    @relation("BookingGuest")
+  shortTermBookingsAsHost  ShortTermBooking[]    @relation("BookingHost")
 
   @@index([email])
   @@index([role])
@@ -235,6 +256,22 @@ model Property {
   petsAllowed    Boolean    @default(false)
   smokingAllowed Boolean    @default(false)
   sharedProperty Boolean    @default(false)
+
+  // ===== SHORT-TERM / OVERNIGHT =====
+  shortTermAvailable     Boolean @default(false)
+  shortTermPricePerNight Int?    // price per night in same currency as rentAmount
+  shortTermMinNights     Int     @default(1)
+  shortTermMaxNights     Int?
+
+  shortTermBookings      ShortTermBooking[]
+
+  // ===== SHARED LIVING =====
+  sharedLivingAvailable   Boolean @default(false)
+  availableRooms          Int?
+  tenantCanFindRoommate   Boolean @default(false)
+
+  // Roommate listings connected to this property
+  roommateListings        RoommateListing[] @relation("PropertyRoommateListings")
 
   // ===== STUDENT FRIENDLY =====
   studentFriendly       Boolean @default(false)
@@ -681,5 +718,103 @@ model BlogVote {
   @@unique([postId, userId]) // One vote per user per post
   @@index([postId])
   @@index([userId])
+}
+
+// RoommateListing Model - Tenants post these when looking for a roommate
+model RoommateListing {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   User   @relation("TenantRoommateListings", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  title             String
+  bio               String   @db.Text
+  budget            Int
+  currency          String   @default("USD")
+  preferredLocation String
+  moveInDate        DateTime
+  moveOutDate       DateTime?
+
+  // Lifestyle preferences
+  smoking       Boolean @default(false)
+  pets          Boolean @default(false)
+  studyFriendly Boolean @default(false)
+  nightOwl      Boolean @default(false)
+  earlyBird     Boolean @default(false)
+  cleanliness   String? // "very_clean" | "average" | "relaxed"
+  gender        String? // "male" | "female" | "any"
+  occupation    String?
+
+  // Optional link to a specific property
+  propertyId String?
+  property   Property? @relation("PropertyRoommateListings", fields: [propertyId], references: [id], onDelete: SetNull)
+
+  status    RoommateListingStatus @default(PENDING)
+  adminNote String?               @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages RoommateMessage[]
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([preferredLocation])
+  @@index([budget])
+}
+
+// RoommateMessage Model - Direct messages between potential roommates
+model RoommateMessage {
+  id        String          @id @default(cuid())
+  listingId String
+  listing   RoommateListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  senderId   String
+  sender     User   @relation("RoommateMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver   User   @relation("RoommateMessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  content String    @db.Text
+  readAt  DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([createdAt])
+}
+
+// ShortTermBooking Model - overnight / short-stay bookings
+model ShortTermBooking {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  guestId  String
+  guest    User   @relation("BookingGuest", fields: [guestId], references: [id], onDelete: Cascade)
+
+  hostId   String
+  host     User   @relation("BookingHost", fields: [hostId], references: [id], onDelete: Cascade)
+
+  checkIn      DateTime
+  checkOut     DateTime
+  totalNights  Int
+  pricePerNight Int
+  totalPrice   Int
+
+  status        BookingStatus @default(PENDING)
+  guestNotes    String?       @db.Text
+  hostNotes     String?       @db.Text
+  rejectionNote String?       @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+  @@index([guestId])
+  @@index([hostId])
+  @@index([status])
+  @@index([checkIn])
+  @@index([checkOut])
 }
 

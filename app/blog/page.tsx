@@ -16,7 +16,8 @@ import {
   Search,
   Hash,
   ThumbsUp,
-  ThumbsDown
+  ThumbsDown,
+  BookOpen
 } from 'lucide-react';
 
 interface BlogPost {
@@ -124,7 +125,7 @@ export default function BlogPage() {
       <section className="bg-gradient-to-r from-emerald-600 to-blue-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4">Community Blog</h1>
+            <h1 className="text-4xl sm:text-5xl font-bold mb-4 flex justify-center items-center gap-3"><BookOpen className="w-10 h-10" />Community Blog</h1>
             <p className="text-lg sm:text-xl text-emerald-50 mb-6">
               Share experiences, resources, and insights about your area
             </p>

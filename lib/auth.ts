@@ -1,15 +1,14 @@
 import { type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import GoogleProvider from 'next-auth/providers/google';
 import { prisma } from './prisma';
 import { compare } from 'bcryptjs';
+import { consumeRateLimit, getClientIp, resetRateLimit } from './rateLimit';
+
+const SIGNIN_IP_LIMIT = { max: 20, windowMs: 15 * 60 * 1000 };
+const SIGNIN_EMAIL_LIMIT = { max: 8, windowMs: 15 * 60 * 1000 };
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-    }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -21,8 +20,18 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        const normalizedEmail = credentials.email.trim().toLowerCase();
+        const ip = getClientIp(req?.headers);
+
+        const ipRateLimit = consumeRateLimit(`signin:ip:${ip}`, SIGNIN_IP_LIMIT);
+        const emailRateLimit = consumeRateLimit(`signin:email:${normalizedEmail}`, SIGNIN_EMAIL_LIMIT);
+
+        if (!ipRateLimit.success || !emailRateLimit.success) {
+          return null;
+        }
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { email: normalizedEmail },
           select: {
             id: true,
             email: true,
@@ -41,6 +50,9 @@ export const authOptions: NextAuthOptions = {
         if (!passwordMatch) {
           return null;
         }
+
+        resetRateLimit(`signin:ip:${ip}`);
+        resetRateLimit(`signin:email:${normalizedEmail}`);
 
         return {
           id: user.id,
@@ -72,6 +84,24 @@ export const authOptions: NextAuthOptions = {
         delete session.user.image;
       }
       return session;
+    },
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`;
+      }
+
+      try {
+        const parsedUrl = new URL(url);
+        const parsedBaseUrl = new URL(baseUrl);
+
+        if (parsedUrl.origin === parsedBaseUrl.origin) {
+          return url;
+        }
+      } catch {
+        return baseUrl;
+      }
+
+      return baseUrl;
     },
   },
   session: {
