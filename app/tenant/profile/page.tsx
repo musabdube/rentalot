@@ -183,11 +183,19 @@ export default function TenantProfilePage() {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile Picture</h2>
               <div className="flex items-center gap-6">
                 <div className="relative">
-                  <img
-                    src={avatarPreview || 'https://via.placeholder.com/150?text=No+Avatar'}
-                    alt="Avatar preview"
-                    className="w-32 h-32 rounded-full object-cover border-4 border-emerald-100"
-                  />
+                  {avatarPreview ? (
+                    <img
+                      src={avatarPreview}
+                      alt="Avatar preview"
+                      className="w-32 h-32 rounded-full object-cover border-4 border-emerald-100"
+                    />
+                  ) : (
+                    <div className="w-32 h-32 rounded-full border-4 border-emerald-100 bg-emerald-600 flex items-center justify-center">
+                      <span className="text-4xl font-bold text-white select-none">
+                        {formData.name ? formData.name.charAt(0).toUpperCase() : '?'}
+                      </span>
+                    </div>
+                  )}
                   <label className="absolute bottom-0 right-0 p-2 bg-emerald-600 text-white rounded-full cursor-pointer hover:bg-emerald-700 transition-colors shadow-lg">
                     <Upload className="w-5 h-5" />
                     <input

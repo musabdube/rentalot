@@ -22,63 +22,54 @@ export async function GET() {
     }
 
     // Get all properties for this landlord
-    const properties = await prisma.property.findMany({
-      where: { landlordId: session.user.id },
-      include: {
-        rentalRequests: {
-          select: {
-            id: true,
-            status: true,
-            createdAt: true,
-          },
-        },
-      },
-    });
-
-    // Get total rental requests
-    const allRentalRequests = await prisma.rentalRequest.findMany({
-      where: { landlordId: session.user.id },
-      select: {
-        id: true,
-        status: true,
-        propertyId: true,
-        createdAt: true,
-      },
-    });
-
-    // Calculate metrics
-    const totalProperties = properties.length;
-    const activeListings = properties.filter(p => p.status === 'ACTIVE').length;
-    const occupiedProperties = properties.filter(p => p.availabilityStatus === 'PENDING_RENT').length;
-    const occupancyRate = totalProperties > 0 ? Math.round((occupiedProperties / totalProperties) * 100) : 0;
-
-    // Calculate total requests per property (use as proxy for "views")
-    const totalRequests = allRentalRequests.length;
-    const totalViews = totalRequests; // Use rental requests as engagement metric
-    const approvedRequests = allRentalRequests.filter(r => r.status === 'APPROVED').length;
-
-    // Calculate revenue (mock - replace with actual payment data)
-    const totalRevenue = properties.reduce((sum, p) => sum + p.rentAmount * occupiedProperties, 0);
-    const averageRent = properties.length > 0 ? Math.round(properties.reduce((sum, p) => sum + p.rentAmount, 0) / properties.length) : 0;
-
-    // Get this month stats
+    const landlordId = session.user.id;
     const thisMonthStart = new Date();
     thisMonthStart.setDate(1);
-    
-    const thisMonthRequests = allRentalRequests.filter(r => 
-      new Date(r.createdAt) >= thisMonthStart
-    ).length;
+    thisMonthStart.setHours(0, 0, 0, 0);
 
-    // Get top property (by rental requests count)
+    // Run all counts/aggregations in parallel — no full row fetches
+    const [
+      totalProperties,
+      activeListings,
+      occupiedProperties,
+      totalRequests,
+      approvedRequests,
+      thisMonthRequests,
+      rentAggregate,
+      topPropertyData,
+    ] = await Promise.all([
+      prisma.property.count({ where: { landlordId } }),
+      prisma.property.count({ where: { landlordId, status: 'ACTIVE' } }),
+      prisma.property.count({ where: { landlordId, availabilityStatus: 'PENDING_RENT' } }),
+      prisma.rentalRequest.count({ where: { landlordId } }),
+      prisma.rentalRequest.count({ where: { landlordId, status: 'APPROVED' } }),
+      prisma.rentalRequest.count({ where: { landlordId, createdAt: { gte: thisMonthStart } } }),
+      prisma.property.aggregate({ where: { landlordId }, _avg: { rentAmount: true }, _sum: { rentAmount: true } }),
+      // Top property by request count — one query with groupBy
+      prisma.rentalRequest.groupBy({
+        by: ['propertyId'],
+        where: { landlordId },
+        _count: { id: true },
+        orderBy: { _count: { id: 'desc' } },
+        take: 1,
+      }),
+    ]);
+
+    const averageRent = Math.round(rentAggregate._avg.rentAmount ?? 0);
+    const occupancyRate = totalProperties > 0 ? Math.round((occupiedProperties / totalProperties) * 100) : 0;
+    const totalRevenue = (rentAggregate._avg.rentAmount ?? 0) * occupiedProperties;
+
+    // Resolve top property title if we have a result
     let topProperty = null;
-    if (properties.length > 0) {
-      const sortedByRequests = [...properties].sort((a, b) => b.rentalRequests.length - a.rentalRequests.length);
-      const topProp = sortedByRequests[0];
-      const topPropRequests = topProp.rentalRequests.length;
-      
+    if (topPropertyData.length > 0) {
+      const topProp = await prisma.property.findUnique({
+        where: { id: topPropertyData[0].propertyId },
+        select: { title: true },
+      });
+      const topPropRequests = topPropertyData[0]._count.id;
       topProperty = {
-        title: topProp.title,
-        views: topPropRequests, // Using rental request count as engagement metric
+        title: topProp?.title ?? 'Unknown',
+        views: topPropRequests,
         requests: topPropRequests,
       };
     }
@@ -86,13 +77,13 @@ export async function GET() {
     return NextResponse.json({
       totalProperties,
       activeListings,
-      totalViews,
+      totalViews: totalRequests,
       rentalRequests: totalRequests,
       approvedRequests,
       totalRevenue,
       occupancyRate,
       averageRent,
-      viewsThisMonth: totalViews, // Mock - should track separately
+      viewsThisMonth: totalRequests,
       requestsThisMonth: thisMonthRequests,
       topProperty,
     });

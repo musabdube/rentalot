@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
+export const revalidate = 3600; // cache settings for 1 hour
+
 export async function GET() {
   try {
     const settings = await prisma.settings.findUnique({

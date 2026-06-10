@@ -83,25 +83,22 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // Include user's vote if logged in
+    // Include user's vote if logged in — single batch query instead of N+1
     if (session?.user?.id) {
-      const postsWithVotes = await Promise.all(
-        posts.map(async (post) => {
-          const userVote = await prisma.blogVote.findUnique({
-            where: {
-              postId_userId: {
-                postId: post.id,
-                userId: session.user.id,
-              },
-            },
-          });
+      const postIds = posts.map((p) => p.id);
+      const userVotes = await prisma.blogVote.findMany({
+        where: {
+          userId: session.user.id,
+          postId: { in: postIds },
+        },
+        select: { postId: true, voteType: true },
+      });
+      const voteMap = new Map(userVotes.map((v) => [v.postId, v.voteType]));
 
-          return {
-            ...post,
-            userVote: userVote?.voteType || null,
-          };
-        })
-      );
+      const postsWithVotes = posts.map((post) => ({
+        ...post,
+        userVote: voteMap.get(post.id) || null,
+      }));
 
       return NextResponse.json({ posts: postsWithVotes });
     }

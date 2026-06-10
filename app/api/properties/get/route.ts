@@ -118,10 +118,7 @@ export async function GET(request: NextRequest) {
         },
       },
       include: {
-        images: {
-          where: { isMain: true },
-          select: { url: true },
-        },
+        images: true,
         landlord: {
           select: { name: true, avatar: true },
         },
@@ -134,15 +131,11 @@ export async function GET(request: NextRequest) {
       take: 100,
     });
 
-    // Fetch all images for each property
-    const propertiesWithAllImages = await Promise.all(
-      properties.map(async (property) => {
-        const allImages = await prisma.propertyImage.findMany({
-          where: { propertyId: property.id },
-        });
-        return { ...property, allImages };
-      })
-    );
+    // No extra per-property image queries needed — images already included above
+    const propertiesWithAllImages = properties.map((property) => ({
+      ...property,
+      allImages: property.images,
+    }));
 
     // Transform Prisma data to match Property interface
     const formattedProperties = propertiesWithAllImages.map((property) => ({
@@ -162,7 +155,7 @@ export async function GET(request: NextRequest) {
       bathrooms: property.bathrooms,
       toilets: property.toilets,
       area: property.area,
-      imageUrl: property.images[0]?.url || 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg',
+      imageUrl: property.images.find(img => img.isMain)?.url || property.images[0]?.url || 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg',
       images: property.allImages,
       features: property.features || [],
       type: property.type.toLowerCase() as 'apartment' | 'house' | 'villa' | 'studio',
